@@ -16,7 +16,7 @@ export const create = async ctx => {
 
         const userId = data.sub
         const { gameId } = ctx.request.body
-       
+
         let homeTeamScore = parseInt(ctx.request.body.homeTeamScore)
         let awayTeamScore = parseInt(ctx.request.body.awayTeamScore)
 
@@ -24,6 +24,11 @@ export const create = async ctx => {
             homeTeamScore = 0
         } else if (!awayTeamScore) {
             awayTeamScore = 0
+        }
+
+        if (homeTeamScore > 30 || awayTeamScore > 30) {
+            ctx.status = 203
+            return
         }
 
         try {
