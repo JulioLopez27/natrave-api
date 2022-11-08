@@ -26,7 +26,8 @@ export const create = async ctx => {
             awayTeamScore = 0
         }
 
-        if (homeTeamScore > 30 || awayTeamScore > 30) {
+        const maxValueScore=30
+        if (homeTeamScore > maxValueScore || awayTeamScore > maxValueScore) {
             ctx.status = 203
             return
         }
