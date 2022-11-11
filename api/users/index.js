@@ -49,7 +49,7 @@ export const login = async ctx => {
     const user = await prisma.user.findUnique({
         where: { email }
     })
-
+    
     if (!user) {
         ctx.status = 404
         return
@@ -57,7 +57,7 @@ export const login = async ctx => {
     const passwordMatch = await bcrypt.compare(plainTextPassword, user.password)
 
     if (!passwordMatch) {
-        ctx.status = 404
+        ctx.status = 406
         return
     }
 
@@ -84,6 +84,6 @@ export const hunches = async ctx => {
     const hunches = await prisma.hunch.findMany({
         where: { userId: user.id }
     })
-    ctx.body = {name:user.name,hunches}
+    ctx.body = { name: user.name, hunches }
 }
 
