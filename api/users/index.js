@@ -6,26 +6,29 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 export const signup = async (ctx) => {
-    // password encryptation
+
     const email = ctx.request.body.email
     const username = ctx.request.body.username
     const user = await prisma.user.findUnique({
         where: { email }
     })
-    
-    if (user.username.toLowerCase() === username.toLowerCase()) {
-        ctx.status = 303
-        return
-    }
-
+    const u = await prisma.user.findUnique({
+        where: { username }
+    })
     if (user) {
         ctx.status = 302
         return
     }
+
+    if (u != null && u.username === username) {
+        ctx.status = 303
+        return
+    }
+    // password encryptation
     const password = await bcrypt.hash(ctx.request.body.password, 10)
     const data = {
         name: ctx.request.body.name,
-        username: ctx.request.body.username,
+        username,
         email,
         password,
     }
@@ -41,7 +44,7 @@ export const signup = async (ctx) => {
 
         ctx.body = { user, accessToken }
         ctx.status = 201
-        console.log(ctx.body);
+
 
     } catch (error) {
         ctx.body = error
