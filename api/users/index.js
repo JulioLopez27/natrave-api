@@ -8,9 +8,16 @@ const prisma = new PrismaClient()
 export const signup = async (ctx) => {
     // password encryptation
     const email = ctx.request.body.email
+    const username = ctx.request.body.username
     const user = await prisma.user.findUnique({
         where: { email }
     })
+    
+    if (user.username.toLowerCase() === username.toLowerCase()) {
+        ctx.status = 303
+        return
+    }
+
     if (user) {
         ctx.status = 302
         return
@@ -49,7 +56,6 @@ export const login = async ctx => {
     const user = await prisma.user.findUnique({
         where: { email }
     })
-    
     if (!user) {
         ctx.status = 404
         return
