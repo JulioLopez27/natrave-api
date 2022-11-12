@@ -10,9 +10,9 @@ export const router = new Router()
 
 /*************PATHS**************************************************/
 // USERS
+router.get('/users',users.getUsers)
 router.get('/login', users.login)
 router.post('/signup', users.signup)
-
 
 // GAMES
 router.get('/games', games.list)

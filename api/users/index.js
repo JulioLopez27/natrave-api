@@ -5,6 +5,18 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
+export const getUsers = async ctx => {
+    const users = await prisma.user.findMany()
+    if (users == null) {
+        ctx.status = 303
+        return
+    }
+    ctx.body =users
+    return
+}
+
+
+
 export const signup = async (ctx) => {
 
     const email = ctx.request.body.email
