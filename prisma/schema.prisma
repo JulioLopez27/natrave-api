@@ -1,54 +1,46 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String
-  email    String @unique
-  username String @unique
-  password String
-
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  name      String?   @db.VarChar(255)
+  email     String?   @unique(map: "email") @db.VarChar(255)
+  username  String?   @unique(map: "username") @db.VarChar(255)
+  password  String?   @db.VarChar(255)
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  updatedAt DateTime? @default(now()) @db.DateTime(0)
   huches    Hunch[]
 }
 
 model Game {
-  id       String   @id @default(cuid())
-  homeTeam String
-  awayTeam String
-  gameTime DateTime
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  homeTeam  String?   @db.VarChar(255)
+  awayTeam  String?   @db.VarChar(255)
+  gameTime  DateTime? @db.DateTime(0)
+  createdAt DateTime? @default(now()) @db.DateTime(0)
+  updatedAt DateTime? @default(now()) @db.DateTime(0)
+  hunches   Hunch[]
 
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
-
-  hunches Hunch[]
-
-  @@unique([homeTeam, awayTeam, gameTime])
+  @@unique([homeTeam, awayTeam, gameTime], map: "home_team_away_team_game_time")
 }
 
 model Hunch {
-  id            String @id @default(cuid())
-  userId        String
-  gameId        String
-  homeTeamScore Int
-  awayTeamScore Int
+  id            String    @id @default(cuid()) @db.VarChar(255)
+  userId        String?   @db.VarChar(255)
+  gameId        String?   @db.VarChar(255)
+  homeTeamScore Int?
+  awayTeamScore Int?
+  createdAt     DateTime? @default(now()) @db.DateTime(0)
+  updatedAt     DateTime? @default(now()) @db.DateTime(0)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Hunch_ibfk_1")
+  game          Game?     @relation(fields: [gameId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Hunch_ibfk_2")
 
-  user      User     @relation(fields: [userId], references: [id])
-  game      Game     @relation(fields: [gameId], references: [id])
-  createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
-
-  @@unique([userId,gameId])
+  @@unique([userId, gameId], map: "user_id_game_id")
+  @@index([gameId], map: "gameId")
 }
