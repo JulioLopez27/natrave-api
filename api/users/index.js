@@ -11,7 +11,7 @@ export const getUsers = async ctx => {
         ctx.status = 303
         return
     }
-    ctx.body =users
+    ctx.body = users
     return
 }
 
@@ -21,17 +21,16 @@ export const signup = async (ctx) => {
 
     const email = ctx.request.body.email
     const username = ctx.request.body.username
-    const user = await prisma.user.findUnique({
-        where: { email }
-    })
-    const u = await prisma.user.findUnique({
-        where: { username }
-    })
+
+    const user = await prisma.user.findUnique({ where: { email } })
     if (user) {
         ctx.status = 302
         return
     }
 
+    const u = await prisma.user.findUnique({
+        where: { username }
+    })
     if (u != null && u.username === username) {
         ctx.status = 303
         return
